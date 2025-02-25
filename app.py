@@ -39,6 +39,8 @@ class Cliente(db.Model):
             'telefono': self.telefono,
             'clave_elector': self.clave_elector,
         }
+    
+
 
 
 #Ruta raiz
