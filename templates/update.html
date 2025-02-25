@@ -1,0 +1,64 @@
+{% extends 'base.html'%}
+
+{%block title%}Actualizar alumno{%endblock%}
+
+{% block content %}
+
+
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-4">Formulario de Actualización</h5>
+            <form action="{{ url_for('update_cliente', id_cliente=cliente.id_cliente)}}" method="POST">
+                
+                <div class="form-group mb-3">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required 
+                           placeholder="Ingresa el nombre" value="{{cliente.nombre}}">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="ap_paterno">Apellido paterno</label>
+                    <input type="text" class="form-control" id="ap_paterno" name="ap_paterno" required 
+                            value="{{cliente.ap_paterno}}">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="ap_materno">Apellido materno</label>
+                    <input type="text" class="form-control" id="ap_materno" name="ap_materno" required 
+                            value="{{cliente.ap_materno}}">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="semestre">Telefono</label>
+                    <input type="text" class="form-control" id="telefono" name="telefono" required 
+                            value="{{cliente.telefono}}">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="semestre">Clave de elector</label>
+                    <input type="text" class="form-control" id="clave_elector" name="clave_elector" required 
+                            value="{{cliente.clave_elector}}">
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <!-- Botón de actualizar con icono -->
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                    <!-- Botón de cancelar con icono -->
+                    <a href="{{ url_for('index')}}" class="btn btn-danger">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Enlazar Font Awesome si no está ya incluido -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+{% endblock %}
+
+

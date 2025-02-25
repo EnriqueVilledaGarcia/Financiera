@@ -1,0 +1,54 @@
+{% extends 'base.html'%}
+
+{% block title %} Lista de clientes {% endblock %}
+
+{% block content %}
+<!-- Botón para agregar un nuevo cliente -->
+<a href="{{ url_for('create_clientes')}}" class="btn btn-primary">
+    <i class="fas fa-user-plus"></i> Agregar cliente
+</a>
+
+<br><br>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <th>Numero de cliente</th>
+        <th>Nombre</th>
+        <th>Apellido Paterno</th>
+        <th>Apellido Materno</th>
+        <th>Telefono</th>
+        <th>Clave de elector</th>
+        <th>Acciones</th>
+    </thead>
+    <tbody class="table-group-divider">
+        {% for cliente in clientes %}
+        <tr>
+            <td>{{ cliente.id_cliente }}</td>
+            <td>{{ cliente.nombre }}</td>
+            <td>{{ cliente.ap_paterno }}</td>
+            <td>{{ cliente.ap_materno }}</td>
+            <td>{{ cliente.telefono }}</td>
+            <td>{{ cliente.clave_elector }}</td>
+            <td>
+                <!-- Botón para eliminar con icono -->
+                <a href="{{ url_for('delete_cliente', id_cliente=cliente.id_cliente) }}" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+                <!-- Botón para modificar con icono -->
+                <a href="{{ url_for('update_cliente', id_cliente=cliente.id_cliente) }}" class="btn btn-success">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Enlazar Font Awesome si no está ya incluido -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+{% endblock %}
+
+
+
+
