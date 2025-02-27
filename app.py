@@ -21,14 +21,14 @@ db = SQLAlchemy(app)
 
 #Modelo de la base de datos
 
+#clientes
 class Cliente(db.Model):
-    __tablename__ = 'Clientes'
-    id_cliente = db.Column(db.String, primary_key=True)
+    __tablename__ = 'clientes'
+    id_cliente = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String)
     ap_paterno = db.Column(db.String)
     ap_materno = db.Column(db.String)
     telefono = db.Column(db.String)
-    clave_elector = db.Column(db.String)
 
     def to_dict(self):
         return{
@@ -37,15 +37,43 @@ class Cliente(db.Model):
             'ap_paterno': self.ap_paterno,
             'ap_materno': self.ap_materno,
             'telefono': self.telefono,
-            'clave_elector': self.clave_elector,
         }
     
+#creditos
 
+class Creditos(db.Model):
+    __tablename__ = 'creditos'
+    id_credito = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_cliente = db.Column(db.Integer, db.ForeignKey('clientes.id_cliente'), nullable=False)
+    monto = db.Column(db.String)
+    interes = db.Column(db.String)
+    total = db.Column(db.String)
+    no_pagos = db.Column(db.String)
+    fecha_inicio = db.Column(db.String) 
+    fecha_fin = db.Column(db.String)
+
+    # Relación con Cliente
+    cliente = db.relationship('Cliente', backref=db.backref('creditos', lazy=True))
+
+    def to_dict(self):
+        return {
+            'id_credito': self.id_credito,
+            'id_cliente': self.id_cliente,
+            'monto': self.monto,
+            'interes': self.interes,
+            'total': self.total,
+            'no_pagos': self.no_pagos,
+            'fecha_inicio': self.fecha_inicio,
+            'fecha_fin': self.fecha_fin
+        }
 
 
 #Ruta raiz
-
 @app.route('/')
+def menu():
+    return render_template('menu.html')
+
+@app.route('/clientes')
 def index():
     #Realiza una consulta de todos los alumnos
     clientes = Cliente.query.all()
@@ -61,16 +89,14 @@ def create_clientes():
     try:
         if request.method=='POST':
              #Aqui se va a retornar algo.
-            id_cliente = request.form['id_cliente']
             nombre = request.form['nombre']
             ap_paterno = request.form['ap_paterno']
             ap_materno = request.form['ap_materno']
             telefono = request.form['telefono']
-            clave_elector = request.form['clave_elector']
 
         
        
-            nvo_cliente = Cliente(id_cliente=id_cliente, nombre= nombre, ap_paterno=ap_paterno, ap_materno=ap_materno, telefono=telefono, clave_elector=clave_elector)
+            nvo_cliente = Cliente(nombre= nombre, ap_paterno=ap_paterno, ap_materno=ap_materno, telefono=telefono)
 
             db.session.add(nvo_cliente)
             db.session.commit()
@@ -100,10 +126,52 @@ def update_cliente(id_cliente):
         cliente.ap_paterno = request.form['ap_paterno']
         cliente.ap_materno = request.form['ap_materno']
         cliente.telefono = request.form['telefono']
-        cliente.clave_elector = request.form['clave_elector']
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('update.html', cliente=cliente)
+
+
+#Visualizar todos los creditos 
+
+@app.route('/creditos')
+def creditos():
+    #Realiza una consulta de todos los creditos
+    creditos = Creditos.query.all()
+
+    return render_template('creditos.html', creditos=creditos)
+
+@app.route('/creditos/new', methods=['GET', 'POST'])
+def create_creditos():
+    clientes = Cliente.query.all()
+    try:
+        if request.method == 'POST':
+            id_cliente = request.form['id_cliente']
+            monto = float(request.form['monto'])  # Convertir monto a número
+            interes = float(request.form['interes'])  # Convertir interes a número
+            total = monto + interes
+            no_pagos = request.form['no_pagos']
+            fecha_inicio = request.form['fecha_inicio']
+            fecha_fin = request.form['fecha_fin']
+
+            # Crear un nuevo crédito
+            nuevo_credito = Creditos(
+                id_cliente=id_cliente,
+                monto=monto,
+                interes=interes,
+                total=total,
+                no_pagos=no_pagos,
+                fecha_inicio=fecha_inicio,
+                fecha_fin=fecha_fin
+            )
+
+            db.session.add(nuevo_credito)
+            db.session.commit()
+
+            return redirect(url_for('menu'))  # Redirigir a la página principal
+        return render_template('create_credito.html', clientes=clientes)  # Renderizar formulario
+    except:
+        return redirect(url_for('menu'))  # En caso de error, redirigir al index
+
 
 if __name__=='__main__':
     app.run(debug=True)

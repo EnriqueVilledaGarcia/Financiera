@@ -1,0 +1,51 @@
+{% extends 'base.html'%}
+
+{% block title %} Lista de creditos {% endblock %}
+
+{% block content %}
+<!-- Botón para agregar un nuevo cliente -->
+<a href="{{ url_for('create_creditos')}}" class="btn btn-primary">
+  Agregar credito
+</a>
+<a href="{{ url_for('menu')}}" class="btn btn-danger">
+    <i class="fa-solid fa-rotate-left"></i> Regresar
+</a>
+
+<br><br>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <th>Identificador de credito</th>
+        <th>Monto</th>
+        <th>Interes</th>
+        <th>Total</th>
+        <th>Numero de pagos</th>
+        <th>Fecha inicio</th>
+        <th>Fecha fin</th>
+        <th>Cliente</th>
+    </thead>
+    <tbody class="table-group-divider">
+        {% for credito in creditos %}
+        <tr>
+            <td>{{ credito.id_credito }}</td>
+            <td>{{ credito.monto }}</td>
+            <td>{{ credito.interes }}</td>
+            <td>{{ credito.total }}</td>
+            <td>{{ credito.no_pagos }}</td>
+            <td>{{ credito.fecha_inicio }}</td>
+            <td>{{ credito.fecha_fin }}</td>
+            <td>{{ credito.id_cliente }}</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Enlazar Font Awesome si no está ya incluido -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+{% endblock %}
+
+
+
+

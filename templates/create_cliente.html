@@ -10,10 +10,6 @@
         <div class="card-body">
             <h5 class="card-title text-center mb-4">Formulario del cliente</h5>
             <form action="{{ url_for('create_clientes')}}" method="POST">
-                <div class="form-group mb-3">
-                    <label for="no_control">No. de cliente</label>
-                    <input type="text" class="form-control" id="id_cliente" name="id_cliente" required placeholder="Ingresa número de cliente">
-                </div>
 
                 <div class="form-group mb-3">
                     <label for="nombre">Nombre</label>
@@ -35,10 +31,6 @@
                     <input type="text" class="form-control" id="telefono" name="telefono" required placeholder="Ingresa el telefono">
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="semestre">Clave de elector</label>
-                    <input type="text" class="form-control" id="clave_elector" name="clave_elector" required placeholder="Ingresa la clave de elector">
-                </div>
 
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary">
