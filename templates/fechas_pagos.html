@@ -1,0 +1,164 @@
+{% extends 'base.html'%}
+
+{% block title %}Financial Loans - Detalle de Pagos{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-white"><i class="fas fa-money-bill-wave me-2"></i>Detalle de Pagos</h2>
+        <a href="{{ url_for('creditos')}}" class="btn btn-outline-light">
+            <i class="fa-solid fa-rotate-left me-1"></i> Regresar
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-lg bg-dark text-white">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover table-borderless mb-0">
+                    <thead class="bg-black">
+                        <tr>
+                            <th class="text-center py-3">Fecha de pago</th>
+                            <th class="text-center py-3">Cantidad</th>
+                            <th class="text-center py-3">Status</th>
+                            <th class="text-center py-3">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        {% for credito in creditos %}
+                            {% set cantidad_por_pago = (credito.total_original | float) / (credito.no_pagos | int) %}
+                            {% set total_restante = credito.total %}
+                            {% for fecha in credito.fechas_pagos %}
+                            <tr>
+                                <td class="text-center align-middle">{{ fecha }}</td>
+                                <td class="text-center align-middle">${{ "%.2f"|format(cantidad_por_pago) }}</td>
+                                <td class="text-center align-middle">
+                                    {% set pago_realizado = credito.pagos | selectattr('fecha', 'equalto', fecha) | list %}
+                                    {% if total_restante == 0 %}
+                                        <span class="badge bg-success">Pagado</span>
+                                    {% elif pago_realizado %}
+                                        <span class="badge bg-success">Pagado</span>
+                                    {% elif fecha < current_date.strftime('%Y-%m-%d') %}
+                                        <span class="badge bg-danger">Retrasado {{ (current_date - datetime.strptime(fecha, '%Y-%m-%d').date()).days }} días</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Pendiente</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {% if total_restante > 0 and not pago_realizado %}
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <!-- Botón Pagar -->
+                                            <form action="{{ url_for('marcar_pago', id_credito=credito.id_credito, fecha=fecha) }}" method="POST" class="m-0">
+                                                <input type="hidden" name="cantidad" value="{{ cantidad_por_pago | round(2) }}">
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-check me-1"></i> Pagar
+                                                </button>
+                                            </form>
+
+                                            <!-- Botón Otra Cantidad -->
+                                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalOtraCantidad{{ loop.index }}">
+                                                <i class="fas fa-pen-to-square me-1"></i> Otra Cantidad
+                                            </button>
+                                        </div>
+
+                                        <!-- Modal para Otra Cantidad -->
+                                        <div class="modal fade" id="modalOtraCantidad{{ loop.index }}" tabindex="-1" aria-labelledby="modalOtraCantidadLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content bg-dark text-white">
+                                                    <div class="modal-header bg-black border-0">
+                                                        <h5 class="modal-title" id="modalOtraCantidadLabel">
+                                                            <i class="fas fa-money-bill-wave me-2"></i>Pagar Otra Cantidad
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form onsubmit="return validarMonto({{ loop.index }}, {{ total_restante }})" 
+                                                          action="{{ url_for('marcar_pago', id_credito=credito.id_credito, fecha=fecha) }}" method="POST">
+                                                        <div class="modal-body">
+                                                            <div class="mb-3">
+                                                                <label for="cantidad-{{ loop.index }}" class="form-label">Cantidad a pagar:</label>
+                                                                <input type="number" step="0.01" class="form-control bg-secondary text-white" 
+                                                                       id="cantidad-{{ loop.index }}" name="cantidad" required
+                                                                       placeholder="Monto máximo: ${{ "%.2f"|format(total_restante) }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer border-0">
+                                                            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
+                                                                <i class="fas fa-times me-1"></i> Cancelar
+                                                            </button>
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="fas fa-check me-1"></i> Confirmar Pago
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-bold">Pago realizado</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validarMonto(index, restante) {
+        const inputCantidad = document.getElementById(`cantidad-${index}`);
+        const cantidad = parseFloat(inputCantidad.value);
+
+        if (cantidad > restante) {
+            alert(`Error: El monto ingresado ($${cantidad.toFixed(2)}) excede el saldo restante ($${restante.toFixed(2)})`);
+            return false;
+        }
+        
+        if (cantidad <= 0) {
+            alert("Error: El monto debe ser mayor que cero");
+            return false;
+        }
+        
+        return true;
+    }
+</script>
+
+<style>
+    body {
+        background-color: #121212;
+    }
+    .table-dark {
+        --bs-table-bg: #1e1e1e;
+        --bs-table-striped-bg: #252525;
+        --bs-table-hover-bg: #2e2e2e;
+        border-color: #444;
+    }
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .badge {
+        font-size: 0.85em;
+        padding: 5px 10px;
+    }
+    .btn {
+        border-radius: 6px;
+    }
+    .modal-content {
+        border-radius: 10px;
+    }
+    .form-control {
+        background-color: #333;
+        border-color: #444;
+        color: white;
+    }
+    .form-control:focus {
+        background-color: #444;
+        color: white;
+        border-color: #555;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+</style>
+{% endblock %}

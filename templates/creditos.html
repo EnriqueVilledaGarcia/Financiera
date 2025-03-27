@@ -1,51 +1,118 @@
 {% extends 'base.html'%}
 
-{% block title %} Lista de creditos {% endblock %}
+{% block title %}Financial Loans - Lista de Créditos{% endblock %}
 
 {% block content %}
-<!-- Botón para agregar un nuevo cliente -->
-<a href="{{ url_for('create_creditos')}}" class="btn btn-primary">
-  Agregar credito
-</a>
-<a href="{{ url_for('menu')}}" class="btn btn-danger">
-    <i class="fa-solid fa-rotate-left"></i> Regresar
-</a>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-white"><i class="fas fa-file-invoice-dollar me-2"></i>Lista de Créditos</h2>
+        <div>
+            <a href="{{ url_for('create_creditos')}}" class="btn btn-primary me-2">
+                <i class="fa-solid fa-plus me-1"></i> Agregar Crédito
+            </a>
+            <a href="{{ url_for('menu')}}" class="btn btn-outline-light">
+                <i class="fa-solid fa-rotate-left me-1"></i> Regresar
+            </a>
+        </div>
+    </div>
 
-<br><br>
+    <div class="card border-0 shadow-lg bg-dark text-white">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <div class="mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre de cliente...">
+                </div>
+                <table class="table table-dark table-hover table-borderless mb-0">
+                    <thead class="bg-black">
+                        <tr>
+                            <th class="py-3">ID Crédito</th>
+                            <th class="py-3">Estatus</th>
+                            <th class="py-3">Cliente</th>
+                            <th class="py-3">Fecha Inicio</th>
+                            <th class="py-3">Fecha Fin</th>
+                            <th class="py-3">Total</th>
+                            <th class="py-3">Restante</th>
+                            <th class="py-3 text-end">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider" id="creditosTable">
+                        {% for credito in creditos %}
+                        <tr>
+                            <td class="align-middle">{{ credito.id_credito }}</td>
+                            <td class="align-middle">
+                                {% if credito.total == 0 %}
+                                    <span class="badge bg-success">Pagado</span>
+                                {% elif credito.fecha_fin < current_date %}
+                                    <span class="badge bg-danger">Vencido ({{ (current_date - credito.fecha_fin).days }} días)</span>
+                                {% else %}
+                                    <span class="badge bg-primary">Vigente</span>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle">{{ credito.cliente.nombre }} {{ credito.cliente.ap_paterno }} {{ credito.cliente.ap_materno }}</td>   
+                            <td class="align-middle">{{ credito.fecha_inicio.strftime('%d/%m/%Y') }}</td>
+                            <td class="align-middle">{{ credito.fecha_fin.strftime('%d/%m/%Y') }}</td>
+                            <td class="align-middle">${{ "{:,.2f}".format(credito.total_original) }}</td>   
+                            <td class="align-middle">${{ "{:,.2f}".format(credito.total) }}</td>   
+                            <td class="align-middle text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    {% if credito.total > 0 %}
+                                    <a href="{{ url_for('detalle_credito', id_cliente=credito.id_cliente, id_credito=credito.id_credito) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fa-solid fa-money-bill-wave me-1"></i> Pagos
+                                    </a>
+                                    {% endif %}
+                                    {% if credito.total == 0 %}
+                                    <a href="{{ url_for('delete_credito', id_credito=credito.id_credito) }}" 
+                                       class="btn btn-sm btn-outline-danger">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <th>Identificador de credito</th>
-        <th>Monto</th>
-        <th>Interes</th>
-        <th>Total</th>
-        <th>Numero de pagos</th>
-        <th>Fecha inicio</th>
-        <th>Fecha fin</th>
-        <th>Cliente</th>
-    </thead>
-    <tbody class="table-group-divider">
-        {% for credito in creditos %}
-        <tr>
-            <td>{{ credito.id_credito }}</td>
-            <td>{{ credito.monto }}</td>
-            <td>{{ credito.interes }}</td>
-            <td>{{ credito.total }}</td>
-            <td>{{ credito.no_pagos }}</td>
-            <td>{{ credito.fecha_inicio }}</td>
-            <td>{{ credito.fecha_fin }}</td>
-            <td>{{ credito.id_cliente }}</td>
+<style>
+    body {
+        background-color: #121212;
+    }
+    .table-dark {
+        --bs-table-bg: #1e1e1e;
+        --bs-table-striped-bg: #252525;
+        --bs-table-hover-bg: #2e2e2e;
+        border-color: #444;
+    }
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .table {
+        margin-bottom: 0;
+    }
+    .badge {
+        font-size: 0.85em;
+        padding: 5px 8px;
+    }
+    .btn {
+        border-radius: 6px;
+    }
+</style>
 
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<!-- Enlazar Font Awesome si no está ya incluido -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
+<script>
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#creditosTable tr');
+        rows.forEach(row => {
+            const cliente = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            row.style.display = cliente.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
 {% endblock %}
-
-
-
 

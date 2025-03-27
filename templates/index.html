@@ -1,55 +1,92 @@
 {% extends 'base.html'%}
 
-{% block title %} Lista de clientes {% endblock %}
+{% block title %}Financial Loans - Lista de Clientes{% endblock %}
 
 {% block content %}
-<!-- Botón para agregar un nuevo cliente -->
-<a href="{{ url_for('create_clientes')}}" class="btn btn-primary">
-    <i class="fas fa-user-plus"></i> Agregar cliente
-</a>
-<a href="{{ url_for('menu')}}" class="btn btn-danger">
-    <i class="fa-solid fa-rotate-left"></i> Regresar
-</a>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-white"><i class="fas fa-users me-2"></i>Lista de Clientes</h2>
+        <div>
+            <a href="{{ url_for('create_clientes')}}" class="btn btn-primary me-2">
+                <i class="fas fa-user-plus me-1"></i> Agregar Cliente
+            </a>
+            <a href="{{ url_for('menu')}}" class="btn btn-outline-light">
+                <i class="fa-solid fa-rotate-left me-1"></i> Regresar
+            </a>
+        </div>
+    </div>
 
-<br><br>
+    <div class="card border-0 shadow-lg bg-dark text-white">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover table-borderless mb-0">
+                    <thead class="bg-black">
+                        <tr>
+                            <th class="py-3">ID Cliente</th>
+                            <th class="py-3">Nombre</th>
+                            <th class="py-3">Apellido Paterno</th>
+                            <th class="py-3">Apellido Materno</th>
+                            <th class="py-3">Teléfono</th>
+                            <th class="py-3 text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        {% for cliente in clientes %}
+                        <tr>
+                            <td class="align-middle">{{ cliente.id_cliente }}</td>
+                            <td class="align-middle">{{ cliente.nombre }}</td>
+                            <td class="align-middle">{{ cliente.ap_paterno }}</td>
+                            <td class="align-middle">{{ cliente.ap_materno }}</td>
+                            <td class="align-middle">{{ cliente.telefono }}</td>
+                            <td class="align-middle text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ url_for('update_cliente', id_cliente=cliente.id_cliente) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if not cliente.creditos or cliente.creditos|length == 0 %}
+                                    <a href="{{ url_for('delete_cliente', id_cliente=cliente.id_cliente) }}" 
+                                       class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <th>Numero de cliente</th>
-        <th>Nombre</th>
-        <th>Apellido Paterno</th>
-        <th>Apellido Materno</th>
-        <th>Telefono</th>
-        <th>Acciones</th>
-    </thead>
-    <tbody class="table-group-divider">
-        {% for cliente in clientes %}
-        <tr>
-            <td>{{ cliente.id_cliente }}</td>
-            <td>{{ cliente.nombre }}</td>
-            <td>{{ cliente.ap_paterno }}</td>
-            <td>{{ cliente.ap_materno }}</td>
-            <td>{{ cliente.telefono }}</td>
-            <td>
-                <!-- Botón para eliminar con icono -->
-                <a href="{{ url_for('delete_cliente', id_cliente=cliente.id_cliente) }}" class="btn btn-danger">
-                    <i class="fas fa-trash-alt"></i>
-                </a>
-                <!-- Botón para modificar con icono -->
-                <a href="{{ url_for('update_cliente', id_cliente=cliente.id_cliente) }}" class="btn btn-success">
-                    <i class="fas fa-edit"></i>
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<!-- Enlazar Font Awesome si no está ya incluido -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
+<style>
+    body {
+        background-color: #121212;
+    }
+    .table-dark {
+        --bs-table-bg: #1e1e1e;
+        --bs-table-striped-bg: #252525;
+        --bs-table-hover-bg: #2e2e2e;
+        border-color: #444;
+    }
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .btn {
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+    .btn-outline-primary:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+    .btn-outline-danger:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+    }
+    .table {
+        margin-bottom: 0;
+    }
+</style>
 {% endblock %}
-
-
-
-
