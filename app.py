@@ -3,7 +3,8 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for, s
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, date
-
+from werkzeug.security import generate_password_hash, check_password_hash
+import smtplib
 
 #Cargar las variables de entorno
 
@@ -113,9 +114,23 @@ class FinancieraDatos(db.Model):
     monto_socios = db.Column(db.Numeric(10, 2), nullable=False, default=0)
     fecha_actualizacion = db.Column(db.DateTime, default=datetime.utcnow)
 
-#Ruta raiz
+# Modelo para la tabla usuarios
+class Usuario(db.Model):
+    __tablename__ = 'usuarios'
+    id_usuario = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    usuario = db.Column(db.String, nullable=False, unique=True)
+    contrasena = db.Column(db.String, nullable=False)
+
+# Ruta raiz
 @app.route('/')
+def root():
+    return redirect(url_for('login'))  # Redirigir al login al iniciar la aplicación
+
+# Ruta del menú principal
+@app.route('/menu')
 def menu():
+    if 'usuario' not in session:
+        return redirect(url_for('login'))  # Redirigir al login si no hay sesión activa
     return render_template('menu.html')
 
 @app.route('/clientes')
@@ -353,6 +368,35 @@ def total():
         monto_socios=monto_socios,
         total_financiera=total_financiera
     )
+
+# Ruta para registrar un nuevo usuario
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        usuario = request.form['usuario']
+        contrasena = generate_password_hash(request.form['contrasena'])  # Contraseña cifrada
+
+        nuevo_usuario = Usuario(usuario=usuario, contrasena=contrasena)
+        db.session.add(nuevo_usuario)
+        db.session.commit()
+
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+# Ruta para iniciar sesión
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        usuario = request.form['usuario']
+        contrasena = request.form['contrasena']
+
+        usuario_obj = Usuario.query.filter_by(usuario=usuario).first()
+        if usuario_obj and check_password_hash(usuario_obj.contrasena, contrasena):  # Verificación segura
+            session['usuario'] = usuario_obj.usuario
+            return redirect(url_for('menu'))  # Redirigir al menú si las credenciales son correctas
+        else:
+            return render_template('login.html', error="Credenciales incorrectas")  # Mostrar error en el formulario
+    return render_template('login.html')
 
 if __name__=='__main__':
     app.run(debug=True)
