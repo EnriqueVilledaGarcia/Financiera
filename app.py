@@ -142,7 +142,7 @@ def index():
 
 
 
-#Ruta secundaria para crear un nuevo alumno
+#Ruta secundaria para crear un nuevo cliente
 
 @app.route('/clientes/new', methods= ['GET', 'POST'])
 def create_clientes():
@@ -397,6 +397,7 @@ def login():
         else:
             return render_template('login.html', error="Credenciales incorrectas")  # Mostrar error en el formulario
     return render_template('login.html')
+
 
 if __name__=='__main__':
     app.run(debug=True)
