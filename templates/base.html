@@ -19,14 +19,25 @@
             max-height: 100%; /* No superar la altura del navbar */
         }
         
-        /* Estilo para el botón de cerrar sesión */
-        .btn-logout {
+        /* Estilo para los botones */
+        .btn-logout, .btn-outline-light {
             color: #fff;
             border-color: #fff;
         }
-        .btn-logout:hover {
+        .btn-logout:hover, .btn-outline-light:hover {
             background-color: #fff;
             color: #000;
+        }
+
+        /* Adaptación para pantallas pequeñas */
+        @media (max-width: 576px) {
+            .btn-logout, .btn-outline-light {
+                font-size: 0.8rem; /* Reducir tamaño de fuente */
+                padding: 0.25rem 0.5rem; /* Reducir padding */
+            }
+            .navbar-brand img {
+                height: 30px; /* Reducir tamaño del logo */
+            }
         }
     </style>
 </head>
