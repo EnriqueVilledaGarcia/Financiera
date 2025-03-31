@@ -324,6 +324,33 @@ def marcar_pago(id_credito, fecha):
     except Exception as e:
         print(f"Error: {e}")
         return redirect(url_for('menu'))
+    
+@app.route('/cancelar_pago/<int:id_credito>/<fecha>', methods=['POST'])
+def cancelar_pago(id_credito, fecha):
+    try:
+        # Obtener el crédito
+        credito = Creditos.query.filter_by(id_credito=id_credito).first()
+        if not credito:
+            flash("Crédito no encontrado", "danger")
+            return redirect(url_for('detalle_credito', id_cliente=credito.id_cliente, id_credito=id_credito))
+
+        # Buscar el pago realizado en la fecha especificada
+        pago_realizado = Pagos.query.filter_by(id_credito=id_credito, fecha=fecha).first()
+        if not pago_realizado:
+            flash("Pago no encontrado", "danger")
+            return redirect(url_for('detalle_credito', id_cliente=credito.id_cliente, id_credito=id_credito))
+
+        # Revertir el pago
+        credito.total = float(credito.total) + float(pago_realizado.cantidad)
+        db.session.delete(pago_realizado)
+        db.session.commit()
+
+        flash("Pago cancelado exitosamente", "success")
+        return redirect(url_for('detalle_credito', id_cliente=credito.id_cliente, id_credito=id_credito))
+    except Exception as e:
+        print(f"Error: {e}")
+        flash("Error al cancelar el pago", "danger")
+        return redirect(url_for('menu'))
 
 @app.route('/total', methods=['GET', 'POST'])
 def total():
