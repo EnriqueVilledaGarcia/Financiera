@@ -95,6 +95,12 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    {% elif pago_realizado %}
+                                        <form action="{{ url_for('cancelar_pago', id_credito=credito.id_credito, fecha=fecha) }}" method="POST" class="m-0">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-undo me-1"></i> Cancelar Pago
+                                            </button>
+                                        </form>
                                     {% else %}
                                         <span class="text-bold">Pago realizado</span>
                                     {% endif %}

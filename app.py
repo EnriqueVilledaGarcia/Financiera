@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, date
@@ -324,7 +324,7 @@ def marcar_pago(id_credito, fecha):
     except Exception as e:
         print(f"Error: {e}")
         return redirect(url_for('menu'))
-    
+
 @app.route('/total', methods=['GET', 'POST'])
 def total():
     # Obtener y sumar los valores de la columna 'total' de la tabla 'creditos'
