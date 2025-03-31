@@ -23,7 +23,6 @@
                 <table class="table table-dark table-hover table-borderless mb-0">
                     <thead class="bg-black">
                         <tr>
-                            <th class="py-3">ID Crédito</th>
                             <th class="py-3">Estatus</th>
                             <th class="py-3">Cliente</th>
                             <th class="py-3">Fecha Inicio</th>
@@ -36,12 +35,13 @@
                     <tbody class="table-group-divider" id="creditosTable">
                         {% for credito in creditos %}
                         <tr>
-                            <td class="align-middle">{{ credito.id_credito }}</td>
                             <td class="align-middle">
                                 {% if credito.total == 0 %}
                                     <span class="badge bg-success">Pagado</span>
                                 {% elif credito.fecha_fin < current_date %}
                                     <span class="badge bg-danger">Vencido ({{ (current_date - credito.fecha_fin).days }} días)</span>
+                                {% elif (credito.fecha_fin - current_date).days <= 20 and credito.total > 0 %}
+                                    <span class="badge bg-success">Próximo a vencer ({{ (credito.fecha_fin - current_date).days }} días)</span>
                                 {% else %}
                                     <span class="badge bg-primary">Vigente</span>
                                 {% endif %}
@@ -100,6 +100,10 @@
     .btn {
         border-radius: 6px;
     }
+    .bg-orange {
+        background-color: #ff9800 !important;
+        color: #fff;
+    }
 </style>
 
 <script>
@@ -107,7 +111,7 @@
         const filter = this.value.toLowerCase();
         const rows = document.querySelectorAll('#creditosTable tr');
         rows.forEach(row => {
-            const cliente = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const cliente = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
             row.style.display = cliente.includes(filter) ? '' : 'none';
         });
     });
