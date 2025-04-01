@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta, date
 from werkzeug.security import generate_password_hash, check_password_hash
 import smtplib
+from functools import wraps
 
 #Cargar las variables de entorno
 
@@ -29,6 +30,15 @@ app.secret_key = 'clave_secreta_segura'
 @app.context_processor
 def inject_datetime():
     return {'datetime': datetime}
+
+# Decorador para verificar si el usuario ha iniciado sesión
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario' not in session:
+            return redirect(url_for('login'))  # Redirigir al login si no hay sesión activa
+        return f(*args, **kwargs)
+    return decorated_function
 
 #Modelo de la base de datos
 
@@ -128,12 +138,12 @@ def root():
 
 # Ruta del menú principal
 @app.route('/menu')
+@login_required
 def menu():
-    if 'usuario' not in session:
-        return redirect(url_for('login'))  # Redirigir al login si no hay sesión activa
     return render_template('menu.html')
 
 @app.route('/clientes')
+@login_required
 def index():
     #Realiza una consulta de todos los alumnos
     clientes = Cliente.query.all()
@@ -145,6 +155,7 @@ def index():
 #Ruta secundaria para crear un nuevo cliente
 
 @app.route('/clientes/new', methods= ['GET', 'POST'])
+@login_required
 def create_clientes():
     try:
         if request.method=='POST':
@@ -169,6 +180,7 @@ def create_clientes():
 #Eliminar un cliente
 
 @app.route('/clientes/delete/<string:id_cliente>')
+@login_required
 def delete_cliente(id_cliente): 
     cliente = Cliente.query.get(id_cliente)
     if cliente:
@@ -179,6 +191,7 @@ def delete_cliente(id_cliente):
 #Editar un cliente
 
 @app.route('/clientes/update/<string:id_cliente>' , methods= ['GET', 'POST'])
+@login_required
 def update_cliente(id_cliente): 
     cliente = Cliente.query.get(id_cliente)
     if request.method == 'POST':
@@ -194,6 +207,7 @@ def update_cliente(id_cliente):
 #Visualizar todos los creditos 
 
 @app.route('/creditos')
+@login_required
 def creditos():
     #Realiza una consulta de todos los creditos
     creditos = Creditos.query.all()
@@ -203,6 +217,7 @@ def creditos():
     return render_template('creditos.html', creditos=creditos, clientes= clientes, current_date=current_date)
 
 @app.route('/creditos/new', methods=['GET', 'POST'])
+@login_required
 def create_creditos():
     clientes = Cliente.query.all()  # Obtener todos los clientes para el formulario
     try:
@@ -246,6 +261,7 @@ def create_creditos():
     
 
 @app.route('/detalle_credito/<int:id_cliente>/<int:id_credito>')
+@login_required
 def detalle_credito(id_cliente, id_credito):
     # Obtener el crédito específico
     creditos = Creditos.query.filter_by(id_credito=id_credito).all()
@@ -277,6 +293,7 @@ def detalle_credito(id_cliente, id_credito):
     return render_template('fechas_pagos.html', creditos=creditos, cliente=cliente, current_date=current_date)
 
 @app.route('/credito/delete/<int:id_credito>')
+@login_required
 def delete_credito(id_credito):
     try:
         # Obtener el crédito
@@ -295,6 +312,7 @@ def delete_credito(id_credito):
 
 
 @app.route('/marcar_pago/<int:id_credito>/<fecha>', methods=['POST'])
+@login_required
 def marcar_pago(id_credito, fecha):
     try:
         # Obtener los datos del formulario
@@ -326,6 +344,7 @@ def marcar_pago(id_credito, fecha):
         return redirect(url_for('menu'))
     
 @app.route('/cancelar_pago/<int:id_credito>/<fecha>', methods=['POST'])
+@login_required
 def cancelar_pago(id_credito, fecha):
     try:
         # Obtener el crédito
@@ -353,6 +372,7 @@ def cancelar_pago(id_credito, fecha):
         return redirect(url_for('menu'))
 
 @app.route('/total', methods=['GET', 'POST'])
+@login_required
 def total():
     # Obtener y sumar los valores de la columna 'total' de la tabla 'creditos'
     monto_total = db.session.query(db.func.sum(Creditos.total)).scalar() or 0
