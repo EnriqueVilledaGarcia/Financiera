@@ -23,6 +23,8 @@
         .btn-logout, .btn-outline-light {
             color: #fff;
             border-color: #fff;
+            font-size: 0.8rem; /* Tamaño de fuente reducido */
+            padding: 0.3rem 0.6rem; /* Padding reducido */
         }
         .btn-logout:hover, .btn-outline-light:hover {
             background-color: #fff;
@@ -32,12 +34,19 @@
         /* Adaptación para pantallas pequeñas */
         @media (max-width: 576px) {
             .btn-logout, .btn-outline-light {
-                font-size: 0.8rem; /* Reducir tamaño de fuente */
+                font-size: 0.7rem; /* Reducir tamaño de fuente aún más */
                 padding: 0.25rem 0.5rem; /* Reducir padding */
             }
             .navbar-brand img {
                 height: 30px; /* Reducir tamaño del logo */
             }
+        }
+
+        /* Asegurar que los botones estén alineados horizontalmente */
+        .navbar-buttons {
+            display: flex;
+            align-items: center; /* Alinear verticalmente */
+            gap: 0.5rem; /* Espaciado entre botones */
         }
     </style>
 </head>
@@ -51,8 +60,8 @@
             </a>
             
             <!-- Contenido del navbar sin colapsar -->
-            <div class="d-flex ms-auto"> <!-- ms-auto empuja el contenido a la derecha -->
-                <a href="{{ url_for('menu') }}" class="btn btn-outline-light btn-sm me-2">
+            <div class="navbar-buttons ms-auto"> <!-- ms-auto empuja el contenido a la derecha -->
+                <a href="{{ url_for('menu') }}" class="btn btn-outline-light btn-sm">
                     <i class="fas fa-arrow-left me-1"></i> Regresar
                 </a>
                 <a href="{{ url_for('logout') }}" class="btn btn-outline-light btn-sm btn-logout">
