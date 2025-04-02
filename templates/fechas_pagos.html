@@ -78,7 +78,7 @@
                                                         <div class="modal-body">
                                                             <div class="mb-3">
                                                                 <label for="cantidad-{{ loop.index }}" class="form-label">Cantidad a pagar:</label>
-                                                                <input type="number" inputmode="decimal" pattern="[0-9]+([.,][0-9]+)?" class="form-control bg-secondary text-white" 
+                                                                <input type="number" inputmode="numeric" class="form-control bg-secondary text-white" 
                                                                        id="cantidad-{{ loop.index }}" name="cantidad" required
                                                                        placeholder="Monto máximo: ${{ "%.2f"|format(total_restante) }}">
                                                             </div>
