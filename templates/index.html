@@ -10,8 +10,12 @@
             <a href="{{ url_for('create_clientes')}}" class="btn btn-primary me-2">
                 <i class="fas fa-user-plus me-1"></i> Agregar Cliente
             </a>
-            
         </div>
+    </div>
+
+    <!-- Buscador por nombre -->
+    <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre...">
     </div>
 
     <div class="card border-0 shadow-lg bg-dark text-white">
@@ -28,7 +32,7 @@
                             <th class="py-3 text-end">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="table-group-divider">
+                    <tbody class="table-group-divider" id="tableBody">
                         {% for cliente in clientes %}
                         <tr>
                             <td class="align-middle">{{ cliente.id_cliente }}</td>
@@ -44,7 +48,7 @@
                                     </a>
                                     {% if not cliente.creditos or cliente.creditos|length == 0 %}
                                     <a href="{{ url_for('delete_cliente', id_cliente=cliente.id_cliente) }}" 
-                                       class="btn btn-sm btn-outline-danger">
+                                       class="btn btn-sm btn-outline-danger delete-btn">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
                                     {% endif %}
@@ -86,5 +90,63 @@
     .table {
         margin-bottom: 0;
     }
+    /* Ajustes para dispositivos móviles */
+    @media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table th, .table td {
+            white-space: nowrap;
+        }
+        .btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+        }
+    }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Escucha el evento de entrada en el campo de búsqueda
+    // y filtra las filas de la tabla según el nombre del cliente
+    document.getElementById('searchInput').addEventListener('input', function () {
+        // Convierte el valor de búsqueda y el texto de la celda a minúsculas.
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach(row => {
+            const nameCell = row.querySelector('td:nth-child(2)');
+            if (nameCell && nameCell.textContent.toLowerCase().includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Agregar confirmación al eliminar un cliente con SweetAlert2
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault(); // Evitar la acción predeterminada
+            const url = this.href; // Guardar la URL del enlace
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esta acción.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url; // Redirigir si se confirma
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

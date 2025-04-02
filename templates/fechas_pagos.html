@@ -65,7 +65,7 @@
 
                                         <!-- Modal para Otra Cantidad -->
                                         <div class="modal fade" id="modalOtraCantidad{{ loop.index }}" tabindex="-1" aria-labelledby="modalOtraCantidadLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-dialog modal-dialog-centered modal-sm modal-mobile">
                                                 <div class="modal-content bg-dark text-white">
                                                     <div class="modal-header bg-black border-0">
                                                         <h5 class="modal-title" id="modalOtraCantidadLabel">
@@ -96,7 +96,7 @@
                                             </div>
                                         </div>
                                     {% elif pago_realizado %}
-                                        <form action="{{ url_for('cancelar_pago', id_credito=credito.id_credito, fecha=fecha) }}" method="POST" class="m-0">
+                                        <form onsubmit="return confirmarCancelacion(event)" action="{{ url_for('cancelar_pago', id_credito=credito.id_credito, fecha=fecha) }}" method="POST" class="m-0">
                                             <button type="submit" class="btn btn-sm btn-danger">
                                                 <i class="fas fa-undo me-1"></i> Cancelar Pago
                                             </button>
@@ -115,6 +115,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function validarMonto(index, restante) {
         const inputCantidad = document.getElementById(`cantidad-${index}`);
@@ -131,6 +132,24 @@
         }
         
         return true;
+    }
+
+    function confirmarCancelacion(event) {
+        event.preventDefault(); // Evita el envío del formulario inmediato
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción cancelará el pago realizado.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No, regresar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                event.target.submit(); // Envía el formulario si se confirma
+            }
+        });
     }
 </script>
 
@@ -168,6 +187,29 @@
         color: white;
         border-color: #555;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    @media (max-width: 576px) {
+        .modal-mobile {
+            width: 90%;
+            margin: auto;
+        }
+        .table-responsive {
+            font-size: 0.9em;
+        }
+        h2 {
+            font-size: 1.5em;
+        }
+        .btn {
+            font-size: 0.8em;
+        }
+    }
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.95em;
+        }
+        h2 {
+            font-size: 1.75em;
+        }
     }
 </style>
 {% endblock %}

@@ -40,6 +40,17 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@app.before_request
+def verificar_sesion():
+    rutas_sin_proteccion = [
+        'login', 'register', 'static', 'logout', 'root'
+    ]  # Rutas que no requieren autenticación
+    ruta_actual = request.endpoint  # Obtener el nombre de la ruta actual
+
+    # Verificar si la ruta actual no está en las rutas sin protección
+    if ruta_actual not in rutas_sin_proteccion and 'usuario' not in session:
+        return redirect(url_for('login'))  # Redirigir al login si no hay sesión activa
+
 #Modelo de la base de datos
 
 #clientes
@@ -445,6 +456,11 @@ def login():
             return render_template('login.html', error="Credenciales incorrectas")  # Mostrar error en el formulario
     return render_template('login.html')
 
+# Ruta para cerrar sesión
+@app.route('/logout')
+def logout():
+    session.clear()  # Eliminar todos los datos de la sesión
+    return redirect(url_for('login'))  # Redirigir al login después de cerrar sesión
 
 if __name__=='__main__':
     app.run(debug=True)
