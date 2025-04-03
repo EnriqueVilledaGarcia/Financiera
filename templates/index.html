@@ -24,7 +24,6 @@
                 <table class="table table-dark table-hover table-borderless mb-0">
                     <thead class="bg-black">
                         <tr>
-                            <th class="py-3">ID Cliente</th>
                             <th class="py-3">Nombre</th>
                             <th class="py-3">Apellido Paterno</th>
                             <th class="py-3">Apellido Materno</th>
@@ -35,7 +34,6 @@
                     <tbody class="table-group-divider" id="tableBody">
                         {% for cliente in clientes %}
                         <tr>
-                            <td class="align-middle">{{ cliente.id_cliente }}</td>
                             <td class="align-middle">{{ cliente.nombre }}</td>
                             <td class="align-middle">{{ cliente.ap_paterno }}</td>
                             <td class="align-middle">{{ cliente.ap_materno }}</td>
