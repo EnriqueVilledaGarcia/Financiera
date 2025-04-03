@@ -119,6 +119,7 @@
 <script>
     function validarMonto(index, restante) {
         const inputCantidad = document.getElementById(`cantidad-${index}`);
+        inputCantidad.focus(); // Asegura que el campo de entrada reciba el foco
         const cantidad = parseFloat(inputCantidad.value);
 
         if (cantidad > restante) {
@@ -207,6 +208,10 @@
         }
         h2 {
             font-size: 1.5em;
+        }
+        .modal-body input {
+            font-size: 1em; /* Asegura que el campo de entrada sea legible */
+            padding: 10px; /* Mejora la usabilidad del campo */
         }
     }
     @media (max-width: 768px) {
