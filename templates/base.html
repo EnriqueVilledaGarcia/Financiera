@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon"> <!-- Favicon agregado -->
     <title>{% block title %}{% endblock %}</title>
     <style>
         /* Estilo personalizado para el navbar */
@@ -14,8 +15,8 @@
         
         /* Estilo para la imagen del logo */
         .navbar-brand img {
-            height: 40px; /* Altura fija */
-            width: auto; /* Ancho automático para mantener proporción */
+            height: 40px; /* Tamaño fijo para el logotipo */
+            width: auto; /* Mantener proporción */
             max-height: 100%; /* No superar la altura del navbar */
         }
         
@@ -23,7 +24,7 @@
         .btn-logout, .btn-outline-light {
             color: #fff;
             border-color: #fff;
-            font-size: 0.8rem; /* Tamaño de fuente reducido */
+            font-size: 0.8rem; /* Tamaño de fuente pequeño */
             padding: 0.3rem 0.6rem; /* Padding reducido */
         }
         .btn-logout:hover, .btn-outline-light:hover {
@@ -34,7 +35,7 @@
         /* Adaptación para pantallas pequeñas */
         @media (max-width: 576px) {
             .btn-logout, .btn-outline-light {
-                font-size: 0.7rem; /* Reducir tamaño de fuente aún más */
+                font-size: 0.7rem; /* Reducir tamaño de fuente */
                 padding: 0.25rem 0.5rem; /* Reducir padding */
             }
             .navbar-brand img {

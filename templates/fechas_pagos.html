@@ -190,17 +190,23 @@
     }
     @media (max-width: 576px) {
         .modal-mobile {
-            width: 90%;
-            margin: auto;
+            max-width: 100%; /* Asegura que el modal ocupe todo el ancho disponible */
+            margin: 0 10px; /* Añade un margen lateral para evitar que toque los bordes */
+        }
+        .modal-content {
+            padding: 10px; /* Reduce el padding interno del modal */
+        }
+        .modal-header h5 {
+            font-size: 1.2em; /* Ajusta el tamaño del título */
+        }
+        .btn {
+            font-size: 0.85em; /* Ajusta el tamaño de los botones */
         }
         .table-responsive {
             font-size: 0.9em;
         }
         h2 {
             font-size: 1.5em;
-        }
-        .btn {
-            font-size: 0.8em;
         }
     }
     @media (max-width: 768px) {
