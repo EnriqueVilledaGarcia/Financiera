@@ -116,7 +116,7 @@
         const filter = this.value.toLowerCase();
         const rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(row => {
-            const nameCell = row.querySelector('td:nth-child(2)');
+            const nameCell = row.querySelector('td:nth-child(1)'); // Cambiado a la primera columna
             if (nameCell && nameCell.textContent.toLowerCase().includes(filter)) {
                 row.style.display = '';
             } else {
