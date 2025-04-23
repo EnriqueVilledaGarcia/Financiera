@@ -65,7 +65,7 @@
 
                                         <!-- Modal para Otra Cantidad -->
                                         <div class="modal fade" id="modalOtraCantidad{{ loop.index }}" tabindex="-1" aria-labelledby="modalOtraCantidadLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered modal-sm modal-mobile">
+                                            <div class="modal-dialog modal-dialog-centered modal-sm">
                                                 <div class="modal-content bg-dark text-white">
                                                     <div class="modal-header bg-black border-0">
                                                         <h5 class="modal-title" id="modalOtraCantidadLabel">
@@ -236,6 +236,30 @@
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
     @media (max-width: 576px) {
+        .modal-dialog {
+            margin: 0;
+            max-width: 100%;
+            height: 100%;
+        }
+        .modal-content {
+            height: 100%;
+            border-radius: 0;
+            overflow-y: auto;
+        }
+        .modal-body {
+            padding: 1rem;
+        }
+        .modal-header, .modal-footer {
+            padding: 1rem;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield; /* Elimina flechas en Firefox */
+        }
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none; /* Elimina flechas en Chrome */
+            margin: 0;
+        }
         .modal-mobile {
             width: 100%;
             margin: 0;
