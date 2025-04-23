@@ -78,7 +78,7 @@
                                                         <div class="modal-body">
                                                             <div class="mb-3">
                                                                 <label for="cantidad-{{ loop.index }}" class="form-label">Cantidad a pagar:</label>
-                                                                <input type="number" inputmode="numeric" class="form-control bg-secondary text-white" 
+                                                                <input type="number" inputmode="decimal" class="form-control bg-secondary text-white" 
                                                                        id="cantidad-{{ loop.index }}" name="cantidad" required
                                                                        placeholder="Monto máximo: ${{ "%.2f"|format(total_restante) }}">
                                                             </div>
@@ -111,6 +111,26 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-lg bg-dark text-white mt-4">
+        <div class="card-header bg-black">
+            <h5 class="fw-bold mb-0">
+                <i class="fas fa-sticky-note me-2"></i>Notas
+            </h5>
+        </div>
+        <div class="card-body">
+            <form onsubmit="guardarNotas(event)">
+                <div class="mb-3">
+                    <textarea class="form-control bg-secondary text-white" name="notas" id="notas" rows="5" placeholder="Escribe tus notas aquí..."></textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Guardar Notas
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -152,6 +172,32 @@
             }
         });
     }
+
+    // Cargar notas desde localStorage al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        const notasTextarea = document.getElementById('notas');
+        const notasGuardadas = localStorage.getItem('notas_cliente_{{ cliente.id_cliente }}');
+        if (notasGuardadas) {
+            notasTextarea.value = notasGuardadas;
+        }
+    });
+
+    // Guardar notas en localStorage
+    function guardarNotas(event) {
+        event.preventDefault();
+        const notasTextarea = document.getElementById('notas');
+        const notas = notasTextarea.value;
+        localStorage.setItem('notas_cliente_{{ cliente.id_cliente }}', notas);
+
+        // Mostrar alerta con SweetAlert2
+        Swal.fire({
+            icon: 'success',
+            title: '¡Notas guardadas!',
+            text: 'Tus notas se han guardado correctamente.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Aceptar'
+        });
+    }
 </script>
 
 <style>
@@ -190,6 +236,23 @@
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
     @media (max-width: 576px) {
+        .modal-mobile {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .modal-content {
+            border-radius: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .modal-header, .modal-footer {
+            padding: 1rem;
+        }
+        .modal-body {
+            padding: 1rem;
+        }
         .modal-mobile {
             max-width: 100%; /* Asegura que el modal ocupe todo el ancho disponible */
             margin: 0 10px; /* Añade un margen lateral para evitar que toque los bordes */

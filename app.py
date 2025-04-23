@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta, date
 from werkzeug.security import generate_password_hash, check_password_hash
 import smtplib
+
 from functools import wraps
 
 #Cargar las variables de entorno
@@ -461,6 +462,8 @@ def login():
 def logout():
     session.clear()  # Eliminar todos los datos de la sesión
     return redirect(url_for('login'))  # Redirigir al login después de cerrar sesión
+
+
 
 if __name__=='__main__':
     app.run(debug=True)
